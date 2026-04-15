@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>Heart Running</title>
+
+<style>
+  body {
+    margin: 0;
+    background: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  #heart {
+    font-family: monospace;
+    white-space: pre;
+    font-size: 11px;
+    line-height: 11px;
+    letter-spacing: 1px;
+    color: #ff69b4;
+    text-shadow: 0 0 5px #ff69b4, 0 0 10px #ff1493;
+  }
+</style>
+</head>
+
+<body>
+
+<div id="heart"></div>
+
+<script>
+const text = "แดน💗หมวย ";
+const chars = text.split("");
+
+let points = [];
+
+// สร้างหัวใจ
+for (let y = 1.5; y > -1.5; y -= 0.07) {
+  for (let x = -1.5; x < 1.5; x += 0.035) {
+
+    let f =
+      Math.pow(x*x + y*y - 1, 3) -
+      x*x * y*y*y;
+
+    if (f <= 0) {
+      let angle = Math.atan2(y, x);
+      points.push({x, y, angle});
+    }
+  }
+}
+
+// เรียงให้วิ่งเป็นวง
+points.sort((a, b) => a.angle - b.angle);
+
+let offset = 0;
+
+function draw() {
+  let output = "";
+
+  for (let y = 1.5; y > -1.5; y -= 0.07) {
+    let line = "";
+
+    for (let x = -1.5; x < 1.5; x += 0.035) {
+
+      let found = false;
+
+      for (let i = 0; i < points.length; i++) {
+        let p = points[i];
+
+        if (
+          Math.abs(p.x - x) < 0.03 &&
+          Math.abs(p.y - y) < 0.03
+        ) {
+          let charIndex = (i + offset) % chars.length;
+          line += chars[charIndex];
+          found = true;
+          break;
+        }
+      }
+
+      if (!found) line += " ";
+    }
+
+    output += line + "\n";
+  }
+
+  document.getElementById("heart").innerText = output;
+
+  offset += 1;
+}
+
+setInterval(draw, 80);
+</script>
+
+</body>
+</html>
